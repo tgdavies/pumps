@@ -195,9 +195,9 @@ module tocam() {
 	union() {
 		rotate([0,0,90]) {housing_lower();}
 		translate([housing_layout_width, 0, material_h - rim_h]) {rotate([180,0,90]) {housing_upper();}}
-		translate([2 * housing_layout_width - gear_r + 10, 0, 0]) {pump_gear();}
-		translate([2 * housing_layout_width - gear_r + 10, gear_r * 2 + 3, 0]) {pump_gear();}
-		translate([2 * housing_layout_width + gear_r * 2, gear_r,0]) { mounting_plate(); }
+		translate([2 * housing_layout_width - gear_r + 3, 0, 0]) {pump_gear();}
+		translate([2 * housing_layout_width - gear_r + 2, gear_r * 2 + 3, 0]) {pump_gear();}
+		translate([2 * housing_layout_width + gear_r * 1.5, gear_r,0]) { mounting_plate(); }
 	}
 
 }

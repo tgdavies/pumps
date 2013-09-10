@@ -24,7 +24,7 @@ hub_wall_thickness = 1.5;
 // outlet diameter
 outlet_d = 4;
 // extra distance between outlet hole and chamber
-outlet_offset = 0;
+outlet_offset = 2;
 // diameter of holes for fastening the layers of the chamber together
 chamber_hole_d = 2;
 // thickness of chamber floor and ceiling
@@ -242,10 +242,10 @@ difference() {
 module tocam() {
 union() {
 	translate([-chamber_d - 5,0,0]) {mount();}
-	impeller();
-	translate([chamber_d + chamber_wall + 3,0,0]) { chamber_b(); }
+	translate([1.5,0,0]) {impeller();}
+	translate([chamber_d + chamber_wall + 4.5,0,0]) { chamber_b(); }
 	//rotate([180,0,0]) {translate([0,0,-material_h]) { chamber_t(); }}
-	rotate([180,0,0]) {translate([(chamber_d + chamber_wall) * 2 + 15,0,-material_h]) { chamber_t(); }}
+	rotate([180,0,0]) {translate([(chamber_d + chamber_wall) * 2 + 17,0,-material_h]) { chamber_t(); }}
 	}
 }
 	

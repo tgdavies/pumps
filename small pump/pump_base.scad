@@ -24,7 +24,7 @@ hub_wall_thickness = 1.5;
 // outlet diameter
 outlet_d = 4;
 // extra distance between outlet hole and chamber
-outlet_offset = 2;
+outlet_offset = 3;
 // diameter of holes for fastening the layers of the chamber together
 chamber_hole_d = 2;
 // thickness of chamber floor and ceiling
@@ -35,6 +35,8 @@ inlet_d = hub_wall_thickness * 2 + 6;
 mount_d = 2;
 // distance between mounting holes
 mount_spacing = 15.5;
+
+tool_r = 3.175 / 2;
 
 module impeller_blade() {
 	cube([chamber_d/2,1.5,material_h]);
@@ -107,11 +109,20 @@ module chamber_blank() {
 	}
 }
 
+/*module smoother() {
+	translate([13,5,0]) {rotate([0,0,150]) {difference() {
+		hole() {cylinder(r = tool_r * 2, h = ridge_h);}
+		hole() {cylinder(r = tool_r, h = ridge_h);}
+		translate([-5,-9,-5]) {cube([10,10,10]);}
+	}}}
+}*/
+
 module chamber_ridge(m) {
 	difference() {
 		cylinder(r = chamber_d/2 + chamber_wall, h = ridge_h);
 		hole() {cylinder(r = chamber_d/2 + chamber_wall - ridge_w - m, h = ridge_h);}
 		hole() {outlet_blank();}
+		//smoother();
 	}
 }
 
@@ -244,7 +255,6 @@ union() {
 	translate([-chamber_d - 5,0,0]) {mount();}
 	translate([1.5,0,0]) {impeller();}
 	translate([chamber_d + chamber_wall + 4.5,0,0]) { chamber_b(); }
-	//rotate([180,0,0]) {translate([0,0,-material_h]) { chamber_t(); }}
 	rotate([180,0,0]) {translate([(chamber_d + chamber_wall) * 2 + 17,0,-material_h]) { chamber_t(); }}
 	}
 }
@@ -252,6 +262,7 @@ union() {
 	//ridge();
 	//chamber_cavity();
 	
-	tocam();
+	//tocam();
+	
 	
 		

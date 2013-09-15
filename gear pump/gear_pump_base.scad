@@ -15,7 +15,8 @@ shaft_d = 2;
 fastening_d = 2;
 // vertical position of center of pipe
 pipe_vert_cent = (2 * material_h - 2 * rim_h)/2;
-
+showholes="true";
+inout_d = 4;
 
 
 module pump_gear() {
@@ -66,6 +67,10 @@ module f_holes() {
 	}
 }
 
+module inout_hole(r = 0) {
+	hole() {cylinder(r = inout_d/2 + r, material_h);}
+}
+
 module shaft_holes() {
 	if (showholes == "true") {
 		translate([0,0,-0.05]) {
@@ -78,9 +83,7 @@ module shaft_holes() {
 }
 
 module housing_blank(h = material_h, h_block = material_h) {
-	union() {
 		body_hull(gear_r + chamber_wall + clearance, h);
-	}
 }
 
 module pipe_blocks(h, h_block) {
@@ -122,15 +125,15 @@ module housing_lower() {
 	difference() {
 		union() {
 			housing_blank(material_h, material_h - rim_h/2);
-			translate([0,0,rim_h/2]){pipe_blocks(material_h - rim_h, material_h - rim_h/2);}
+			//translate([0,0,rim_h/2]){pipe_blocks(material_h - rim_h, material_h - rim_h/2);}
 		}
 		translate([0,0,floor_h]) { cavity(); }
 		translate([0,0,material_h - rim_h + 0.01]){rim(0.1);}
 		shaft_holes();
 		f_holes();
-		translate([0,0,material_h - rim_h/2]) { pipes(); }
-		translate([0,0,material_h - rim_h - pipe_d/2]) { pipes_overhang(); }
-
+		//translate([0,0,material_h - rim_h/2]) { pipes(); }
+		//translate([0,0,material_h - rim_h - pipe_d/2]) { pipes_overhang(); }
+		translate([gear_centre_d/2,gear_r,0]) { inout_hole(); }
 	}
 }
 
@@ -140,13 +143,15 @@ module housing_upper() {
 			union(){
 				translate([0,0,-rim_h]){rim(0);}
 				housing_blank(material_h - rim_h, material_h - rim_h/2);
-				pipe_blocks(material_h - rim_h, material_h - rim_h/2);
+				//pipe_blocks(material_h - rim_h, material_h - rim_h/2);
 			}
 			translate([0,0,-floor_h - rim_h]) { cavity(); }
 			shaft_holes();
 			translate([0,0,- rim_h]) {f_holes();}
-			translate([0,0,-rim_h/2]) { pipes(); }
-			translate([0,0,-rim_h-pipe_d]) { pipes_overhang(); }
+			translate([gear_centre_d/2,-gear_r,0]) { inout_hole(); }
+
+			//translate([0,0,-rim_h/2]) { pipes(); }
+			//translate([0,0,-rim_h-pipe_d]) { pipes_overhang(); }
 		}
 	}
 }
@@ -167,13 +172,20 @@ module mount_hole(x,y) {
 
 module mounting_plate() {
 	difference() {
-		cylinder(r = gear_r + chamber_wall + clearance, h = material_h);
+	union() {
+		housing_blank(material_h, material_h - rim_h/2);
+		translate([gear_centre_d/2,-gear_r,0]) { cylinder(r = inout_d/2 + 3, h = material_h); }
+
+	}
+		//cylinder(r = gear_r + chamber_wall + clearance, h = material_h);
 		shaft_holes();
 		f_holes();
 		mount_hole(-mount_spacing/2,0);
 		mount_hole(+mount_spacing/2,0);
 		mount_hole(0,-mount_spacing/2);
 		mount_hole(0,+mount_spacing/2);
+		translate([gear_centre_d/2,-gear_r,0]) { inout_hole(1); }
+
 	}
 }
 
@@ -189,15 +201,15 @@ module exploded() {
 	}
 }
 
-housing_layout_width = 2 * (gear_r + chamber_wall + pipe_l);
+housing_layout_width = 2 * (gear_r + chamber_wall + 5);
 
 module tocam() {
 	union() {
 		rotate([0,0,90]) {housing_lower();}
 		translate([housing_layout_width, 0, material_h - rim_h]) {rotate([180,0,90]) {housing_upper();}}
-		translate([2 * housing_layout_width - gear_r + 3, -4, 0]) {pump_gear();}
-		translate([2 * housing_layout_width - gear_r + 2, gear_r * 2 - 2, 0]) {pump_gear();}
-		translate([2 * housing_layout_width + gear_r * 1.5 -2, gear_r - 2,0]) { mounting_plate(); }
+		translate([2 * housing_layout_width - gear_r + 4, -4, 0]) {pump_gear();}
+		translate([2 * housing_layout_width - gear_r + 3, gear_r * 2 - 2, 0]) {pump_gear();}
+		translate([2 * housing_layout_width + gear_r * 1.5 + 3, 0,0]) { rotate([0,0,90]) {mounting_plate();} }
 	}
 
 }
@@ -205,6 +217,8 @@ module tocam() {
 //exploded();
 
 tocam();
+
+//housing_lower();
 
 
 

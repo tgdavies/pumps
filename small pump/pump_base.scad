@@ -175,6 +175,7 @@ module inlet_hole() {
 	hole() {cylinder(r = inlet_d/2, h = material_h);}
 }
 
+// a provides extra radius to the hole
 module outlet_hole(a = 0) {
 	to_outlet() {hole() {cylinder(r = outlet_d/2 + a, h = material_h);}}
 }

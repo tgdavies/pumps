@@ -3,7 +3,7 @@ rim_h = 1;
 rim_w = 1;
 gear_centre_d = 11.5;
 gear_r = 7.5;
-material_h = 3;
+material_h = 6;
 chamber_wall = 3;
 clearance=0.5;
 floor_h=material_h / 2 - rim_h;
@@ -11,7 +11,7 @@ shaft_d = 2;
 fastening_d = 2;
 // vertical position of center of pipe
 pipe_vert_cent = (2 * material_h - 2 * rim_h)/2;
-showholes="true";
+//showholes="true";
 inout_d = 4;
 outlet_offset = 7;
 
@@ -140,7 +140,10 @@ module housing_upper() {
 			translate([0,0,-floor_h - rim_h]) { cavity(); }
 			shaft_holes();
 			translate([0,0,- rim_h]) {f_holes();}
-			move_to_outlet() { inout_hole(); }
+			move_to_outlet() { inout_hole(material_h > 3 ? 1 : 0); }
+			if (material_h > 3) {
+				mount_holes();
+			}
 		}
 	}
 }
@@ -163,6 +166,13 @@ module mount_hole(x,y) {
 	}
 }
 
+module mount_holes() {
+	mount_hole(-mount_spacing/2,0);
+	mount_hole(+mount_spacing/2,0);
+	mount_hole(0,-mount_spacing/2);
+	mount_hole(0,+mount_spacing/2);
+}
+
 module mounting_plate() {
 	difference() {
 	union() {
@@ -173,10 +183,7 @@ module mounting_plate() {
 		//cylinder(r = gear_r + chamber_wall + clearance, h = material_h);
 		shaft_holes();
 		f_holes();
-		mount_hole(-mount_spacing/2,0);
-		mount_hole(+mount_spacing/2,0);
-		mount_hole(0,-mount_spacing/2);
-		mount_hole(0,+mount_spacing/2);
+		mount_holes();
 		move_to_outlet() { inout_hole(1); }
 
 	}
@@ -199,10 +206,12 @@ housing_layout_width = 2 * (gear_r + chamber_wall + 5);
 module tocam() {
 	union() {
 		translate([0, gear_centre_d, 0]) {rotate([0,0,-90]) {housing_lower();}}
-		translate([housing_layout_width + 4, 0, material_h - rim_h]) {rotate([180,0,90]) {housing_upper();}}
+		/*translate([housing_layout_width + 4, 0, material_h - rim_h]) {rotate([180,0,90]) {housing_upper();}}
 		translate([2 * housing_layout_width - gear_r + 2, -4, 0]) {pump_gear();}
 		translate([2 * housing_layout_width - gear_r + 2, gear_r * 2 - 2, 0]) {pump_gear();}
-		translate([2 * housing_layout_width + gear_r * 1.5 + 5, 0,0]) { rotate([0,0,90]) {mounting_plate();} }
+		if (material_h < 4) {
+			translate([2 * housing_layout_width + gear_r * 1.5 + 5, 0,0]) { rotate([0,0,90]) {mounting_plate();} }
+		}*/
 	}
 
 }

@@ -200,8 +200,8 @@ ex = 5;
 
 module exploded() {
 	union() {
-		//translate([0,0,-floor_h-ex]) {housing_lower();}
-		//translate([0,0,material_h - floor_h + ex]) {housing_upper();}
+		translate([0,0,-floor_h-ex]) {housing_lower();}
+		translate([0,0,material_h - floor_h + ex]) {housing_upper();}
 		pump_gear();
 		translate([gear_centre_d,0,0]) {pump_gear("true"); }
 		if (material_h < 4) {
@@ -225,9 +225,9 @@ module tocam() {
 
 }
 
-exploded();
+//exploded();
 
-//tocam();
+tocam();
 
 
 

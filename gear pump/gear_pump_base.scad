@@ -1,8 +1,8 @@
 include <parametric_involute_gear_v5.0.scad>;
 rim_h = 1;
 rim_w = 1;
-gear_centre_d = 11.5;
-gear_r = 7.5;
+gear_centre_d = 12.6;
+gear_r = 8.4;
 material_h = 6;
 chamber_wall = 3;
 clearance=0.5;
@@ -11,15 +11,18 @@ shaft_d = 2;
 fastening_d = 2;
 // vertical position of center of pipe
 pipe_vert_cent = (2 * material_h - 2 * rim_h)/2;
-//showholes="true";
+showholes="true";
 inout_d = 4;
 outlet_offset = 7;
+collar_d=6;
+collar_h=5.4;
 
 
-module pump_gear() {
+module pump_gear(usecollar = "false") {
+difference() {
 gear (number_of_teeth=5,
 			bore_diameter= shaft_d,
-			circular_pitch=400,
+			circular_pitch=450,
 			hub_diameter=1,
 			rim_width=1,
 			rim_thickness=material_h,
@@ -27,6 +30,10 @@ gear (number_of_teeth=5,
 			hub_thickness=1,
 			involute_facets=20,
 			clearance=0.2);
+			if (usecollar == "true") {
+				translate([0,0,material_h - collar_h + 0.1]) {cylinder(r = collar_d/2, h = collar_h+0.1);}
+			}
+		}
 }
 
 module body_hull(r, h) {
@@ -193,11 +200,13 @@ ex = 5;
 
 module exploded() {
 	union() {
-		translate([0,0,-floor_h-ex]) {housing_lower();}
-		translate([0,0,material_h - floor_h + ex]) {housing_upper();}
+		//translate([0,0,-floor_h-ex]) {housing_lower();}
+		//translate([0,0,material_h - floor_h + ex]) {housing_upper();}
 		pump_gear();
-		translate([gear_centre_d,0,0]) {pump_gear(); }
-		translate([0,0,2 * material_h - floor_h + ex * 2]) { mounting_plate(); }
+		translate([gear_centre_d,0,0]) {pump_gear("true"); }
+		if (material_h < 4) {
+			translate([0,0,2 * material_h - floor_h + ex * 2]) { mounting_plate(); }
+		}
 	}
 }
 
@@ -206,19 +215,19 @@ housing_layout_width = 2 * (gear_r + chamber_wall + 5);
 module tocam() {
 	union() {
 		translate([0, gear_centre_d, 0]) {rotate([0,0,-90]) {housing_lower();}}
-		/*translate([housing_layout_width + 4, 0, material_h - rim_h]) {rotate([180,0,90]) {housing_upper();}}
+		translate([housing_layout_width + 4, 0, material_h - rim_h]) {rotate([180,0,90]) {housing_upper();}}
 		translate([2 * housing_layout_width - gear_r + 2, -4, 0]) {pump_gear();}
-		translate([2 * housing_layout_width - gear_r + 2, gear_r * 2 - 2, 0]) {pump_gear();}
+		translate([2 * housing_layout_width - gear_r + 2, gear_r * 2 - 2, 0]) {pump_gear("true");}
 		if (material_h < 4) {
 			translate([2 * housing_layout_width + gear_r * 1.5 + 5, 0,0]) { rotate([0,0,90]) {mounting_plate();} }
-		}*/
+		}
 	}
 
 }
 
-//exploded();
+exploded();
 
-tocam();
+//tocam();
 
 
 
